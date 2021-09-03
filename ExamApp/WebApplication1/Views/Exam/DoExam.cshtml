@@ -1,0 +1,97 @@
+﻿@model Exam
+@{ ViewData["Title"] = "Sınav"; }
+
+<div class="container">
+    <h1>@Model.Title</h1>
+    <p>@Model.Text</p>
+    <p id="eId" style="display:none;">@Model.Id</p>
+    <hr class="my-4">
+    <div class="row ml-1">
+        @for (int i = 0; i <= Model.Questions.Count - 1; i++)
+        {
+            int x = i + 1;
+<div class="col-md-6">
+    <div class="row ml-1 mt-2">
+        @x) @Model.Questions[i].QuestionText
+    </div>
+    <div class="container">
+        <div class="row ml-2 mt-2" id="@Model.Questions[i].Id@Model.Questions[i].Option1.Replace(" ","-")">
+            <input id="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option1" type="radio" name="@Model.Questions[i].Id" class="form-check-input" value="@Model.Questions[i].Option1" />
+            <label for="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option1">A)@Model.Questions[i].Option1</label>
+        </div>
+        <div class="row ml-2" id="@Model.Questions[i].Id@Model.Questions[i].Option2.Replace(" ","-")">
+            <input id="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option2" type="radio" name="@Model.Questions[i].Id" class="form-check-input" value="@Model.Questions[i].Option2" />
+            <label for="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option2">B)@Model.Questions[i].Option2</label>
+        </div>
+        <div class="row ml-2" id="@Model.Questions[i].Id@Model.Questions[i].Option3.Replace(" ","-")">
+            <input id="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option3" type="radio" name="@Model.Questions[i].Id" class="form-check-input" value="@Model.Questions[i].Option3" />
+            <label for="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option3">C)@Model.Questions[i].Option3</label>
+        </div>
+        <div class="row ml-2" id="@Model.Questions[i].Id@Model.Questions[i].Option4.Replace(" ","-")">
+            <input id="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option4" type="radio" name="@Model.Questions[i].Id" class="form-check-input" value="@Model.Questions[i].Option4" />
+            <label for="@Model.Questions[i].Id+'s'+@Model.Questions[i].Option4">D)@Model.Questions[i].Option4</label>
+        </div>
+    </div>
+</div>}
+    </div>
+    <hr class="my-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <button id="but" type="submit" class="btn btn-success btn-lg btn-block">SINAVI TAMAMLA</button>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>$(document).ready(function () {
+        $("#but").click(function () {
+            $(".form-check-input").attr("disabled", true)
+            var result = document.getElementsByTagName("input");
+            var selected = new Array();
+            var selectedIds = new Array();
+            for (j = 0; j < result.length; j++) {
+                if (result[j].checked) {
+                    selected.push(result[j]);
+                    selectedIds.push(result[j].name + result[j].value.replace(" ", "-"));
+                }
+                if (j == 3) {
+                    if (selected.length == 0) {
+                        selected.push({ "defaultValue": "boş" });
+                        selectedIds.push("boş");
+                    }
+                }
+                if (j == 7) {
+                    if (selected.length == 1) {
+                        selected.push({ "defaultValue": "boş" });
+                        selectedIds.push("boş");
+                    }
+                }
+                if (j == 11) {
+                    if (selected.length == 2) {
+                        selected.push({ "defaultValue": "boş" });
+                        selectedIds.push("boş");
+                    }
+                }
+                if (j == 15) {
+                    if (selected.length == 3) {
+                        selected.push({ "defaultValue": "boş" });
+                        selectedIds.push("boş");
+                    }
+                }
+            }
+            var id = Number(document.getElementById("eId").innerHTML);
+            $.ajax({
+                type: 'POST',
+                dataType: 'JSON',
+                url: '/Exam/IsCorrect',
+                data: { id: id, question1: selected[0].defaultValue, question2: selected[1].defaultValue, question3: selected[2].defaultValue, question4: selected[3].defaultValue },
+                success: function (response) {
+                    for (i = 0; i < response.length; i++) {
+                        if (response[i] == false)
+                            $("#" + selectedIds[i]).attr("style", "background-color:red; color:white;");
+                        else
+                            $("#" + selectedIds[i]).attr("style", "background-color:green; color:white;");
+                    }
+                }
+            });
+        });
+    });</script>

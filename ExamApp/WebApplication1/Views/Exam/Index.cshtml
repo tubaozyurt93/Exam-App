@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Exam>
+@{ ViewData["Title"] = "Exam"; }
+
+<h1>Sınavlar</h1>
+
+<table class="table table-hover" id="tableExam">
+    <thead>
+        <tr>
+            <th scope="col">Başlık</th>
+            <th scope="col">Tarih</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var exam in Model)
+        {
+<tr>
+    <td><a href="/Exam/DoExam/@exam.Id">@exam.Title</a></td>
+    <td>@exam.DateAdded.ToString("dd/MM/yyyy")</td>
+    <td><button type="button" class="btn btn-danger btnDeleteExam" data-id="@exam.Id">Sil</button></td>
+</tr>}
+    </tbody>
+</table>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>$("#tableExam").on("click", ".btnDeleteExam", function () {
+        if (confirm("Sınavı silmek istediğinize emin misiniz?")) {
+            var id = $(this).data("id");
+            var btn = $(this);
+            $.ajax({
+                type: "GET",
+                url: "/Exam/DeleteExam/" + id,
+                success: function () {
+                    btn.parent().parent().remove();
+                }
+            });
+        }
+    });</script>

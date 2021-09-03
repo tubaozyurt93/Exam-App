@@ -1,0 +1,93 @@
+﻿@model ExamTextViewModel
+@{ ViewData["Title"] = "Ana Sayfa"; }
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+<div class="container">
+    <label class="col-form-label col-form-label-lg align-center" for="inputLarge">Yazı</label>
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedTextId, (SelectList)ViewBag.TextData, "Lütfen Bir Yazı Seçiniz", new { Name = "Title", @class = "dropdown form-control-lg" })
+    </div>
+    <p id="para" name="Text"></p>
+    <hr class="my-4">
+    @for (int i = 0; i <= 3; i++)
+    {
+        int x = i + 1;
+<div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label class="col-form-label col-form-label-lg align-center" for="inputLarge">Soru @x</label>
+            @Html.TextBoxFor(model => model.Exam.Questions[i].QuestionText, new { @class = "form-control form-control-lg", @placeholder = "Soru " + @x })
+            @Html.ValidationMessageFor(model => model.Exam.Questions[i].QuestionText, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                @Html.TextBoxFor(model => model.Exam.Questions[i].Option1, new { @class = "form-control form-control-lg", @placeholder = "A)" })
+                                @Html.ValidationMessageFor(model => model.Exam.Questions[i].Option1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                @Html.TextBoxFor(model => model.Exam.Questions[i].Option2, new { @class = "form-control form-control-lg", @placeholder = "B)" })
+                                @Html.ValidationMessageFor(model => model.Exam.Questions[i].Option2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(model => model.Exam.Questions[i].Option3, new { @class = "form-control form-control-lg", @placeholder = "C)" })
+                                                    @Html.ValidationMessageFor(model => model.Exam.Questions[i].Option3, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(model => model.Exam.Questions[i].Option4, new { @class = "form-control form-control-lg", @placeholder = "D)" })
+                                                    @Html.ValidationMessageFor(model => model.Exam.Questions[i].Option4, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6 offset-md-3">
+                                                                    <div class="form-group">
+                                                                        <label for="exampleSelect1">Doğru Cevap Seç</label>
+                                                                        <select class="form-control form-control-lg" id="Exam.Questions[@i].Answer" name="Exam.Questions[@i].Answer">
+                                                                            <option value="1">A)</option>
+                                                                            <option value="2">B)</option>
+                                                                            <option value="3">C)</option>
+                                                                            <option value="4">D)</option>
+                                                                        </select>
+                                                                        @Html.HiddenFor(model => model.Exam.Questions[i].Answer)
+                                                                    </div>
+                                                                </div>
+                                                            </div>}
+    <hr class="my-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <button type="submit" class="btn btn-success btn-lg btn-block">SINAV OLUŞTUR</button>
+        </div>
+    </div>
+</div>}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $("#SelectedTextId").change(function () {
+        var paragraf = document.getElementById('para');
+        var ddlText = $(this);
+        var textId = ddlText.val();
+        if (textId != 0) {
+            paragraf.innerHTML = "Paragraf Yükleniyor Lütfen Bekleyiniz...";
+            $.ajax({
+                method: "GET",
+                url: "/Home/GetTextById/" + textId,
+            }).done(function (result) {
+                paragraf.innerHTML = result.text;
+            });
+        } else {
+            paragraf.innerHTML = "";
+        }
+    });
+</script>
